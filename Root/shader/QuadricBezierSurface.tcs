@@ -1,0 +1,41 @@
+#version 400
+
+/*********************************************************
+ * tess-ctrl shader for quadric bezier surface rendering *
+ *********************************************************/
+ 
+layout(vertices = 9) out;
+ 
+void main() {
+	switch (gl_InvocationID) {
+	case 0:
+		gl_out[0].gl_Position = (gl_in[0].gl_Position + gl_in[1].gl_Position + gl_in[3].gl_Position + gl_in[4].gl_Position) * .25;
+		break;
+	case 1:
+		gl_out[1].gl_Position = (gl_in[1].gl_Position + gl_in[4].gl_Position) * .5;
+		break;
+	case 2:
+		gl_out[2].gl_Position = (gl_in[1].gl_Position + gl_in[2].gl_Position + gl_in[4].gl_Position + gl_in[5].gl_Position) * .25;
+		break;
+	case 3:
+		gl_out[3].gl_Position = (gl_in[3].gl_Position + gl_in[4].gl_Position) * .5;
+		break;
+	case 4:
+		gl_out[4].gl_Position = gl_in[4].gl_Position;
+		break;
+	case 5:
+		gl_out[5].gl_Position = (gl_in[4].gl_Position + gl_in[5].gl_Position) * .5;
+		break;
+	case 6:
+		gl_out[6].gl_Position = (gl_in[3].gl_Position + gl_in[4].gl_Position + gl_in[6].gl_Position + gl_in[7].gl_Position) * .25;
+		break;
+	case 7:
+		gl_out[7].gl_Position = (gl_in[4].gl_Position + gl_in[7].gl_Position) * .5;
+		break;
+	case 8:
+		gl_out[8].gl_Position = (gl_in[4].gl_Position + gl_in[5].gl_Position + gl_in[7].gl_Position + gl_in[8].gl_Position) * .25;
+		break;
+	}
+	gl_TessLevelOuter[0] = gl_TessLevelOuter[1] = gl_TessLevelOuter[2] = gl_TessLevelOuter[3] = 4;
+	gl_TessLevelInner[0] = gl_TessLevelInner[1] = 4;
+}

@@ -1,0 +1,39 @@
+#version 400
+
+/*********************************************************
+ * tess-eval shader for quadric bezier surface rendering *
+ *********************************************************/
+
+layout(quads, equal_spacing, ccw) in;
+
+void main() {
+	vec3 p00 = gl_in[0].gl_Position;
+	vec3 p01 = gl_in[1].gl_Position;
+	vec3 p02 = gl_in[2].gl_Position;
+	vec3 p10 = gl_in[3].gl_Position;
+	vec3 p11 = gl_in[4].gl_Position;
+	vec3 p12 = gl_in[5].gl_Position;
+	vec3 p20 = gl_in[6].gl_Position;
+	vec3 p21 = gl_in[7].gl_Position;
+	vec3 p22 = gl_in[8].gl_Position;
+	
+	mat3 mpx = mat3(p00.x, p01.x, p02.x,
+					p10.x, p11.x, p12.x,
+					p20.x, p21.x, p22.x);
+	mat3 mpy = mat3(p00.y, p01.y, p02.y,
+					p10.y, p11.y, p12.y,
+					p20.y, p21.y, p22.y);
+	mat3 mpz = mat3(p00.z, p01.z, p02.z,
+					p10.z, p11.z, p12.z,
+					p20.z, p21.z, p22.z);
+	vec3 vu = vec3((1. - u) * (1. - u), 2 * (1. - u) * u, u * u);
+	vec3 vv = vec3((1. - v) * (1. - v), 2 * (1. - v) * v, v * v);
+	vec3 dvudu = vec3(u * 2. - 2., u * -4. + 2., u * 2.);
+	vec3 dvvdv = vec3(v * 2. - 2., v * -4. + 2., v * 2.);
+	
+	vec3 tmpx = mpx * vv, tmpy = mpy * vv, tmpz = mpz * vv;
+	gl_Position = vec3(dot(vu, tmpx), dot(vu, tmpy), dot(vu, tmpz));
+	vec3 dpdu = vec3(dot(dvudu, tmpx), dot(dvudu, tmpy), dot(dvudu, tmpz));
+	vec3 dpdv = vec3(dot(vu, mpx * dvvdv), dot(vu, mpy * dvvdv), dot(vu, mpz * dvvdv));
+	teNormal = normalize(cross(dpdu, dpdv));
+}
